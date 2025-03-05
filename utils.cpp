@@ -3,6 +3,12 @@
 #include "lodepng.h"
 #include "miniz.h"
 
+// DG: also support stb_image for input
+#define STBI_NO_PNG // handled by lodepng
+#define STBI_NO_HDR // I don't think we need this?
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 namespace utils 
 {
 		
@@ -168,18 +174,29 @@ bool load_png(const char* pFilename, image_u8& img)
 {
 	img.clear();
 
-	std::vector<unsigned char> pixels;
-	unsigned int w = 0, h = 0;
-	unsigned int e = lodepng::decode(pixels, w, h, pFilename);
-	if (e != 0)
 	{
-		fprintf(stderr, "Failed loading PNG file %s\n", pFilename);
+		std::vector<unsigned char> pixels;
+		unsigned int w = 0, h = 0;
+		unsigned int e = lodepng::decode(pixels, w, h, pFilename);
+		if (e == 0)
+		{
+			img.init(w, h);
+			memcpy(&img.get_pixels()[0], &pixels[0], w * h * sizeof(uint32_t));
+			return true;
+		}
+	}
+
+	// try to use stb_image instead
+	int x=0, y=0, comp=0;
+	unsigned char* pix = stbi_load(pFilename, &x, &y, &comp, STBI_rgb_alpha);
+	if (pix == NULL)
+	{
+		fprintf(stderr, "Failed loading input file %s\n", pFilename);
 		return false;
 	}
 
-	img.init(w, h);
-	memcpy(&img.get_pixels()[0], &pixels[0], w * h * sizeof(uint32_t));
-
+	img.init(x, y);
+	memcpy( &img.get_pixels()[0], pix, (size_t)x * (size_t)y * 4 );
 	return true;
 }
 

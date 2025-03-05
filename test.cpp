@@ -17,7 +17,7 @@ using namespace utils;
 
 static int print_usage()
 {
-	fprintf(stderr, "\nReads PNG files (with or without alpha channels) and packs them to BC1-5 or BC7/BPTC (the default).\nFor BC7, the tool uses either bc7enc.cpp (uses modes 1/5/6/7) or bc7e.ispc (all modes, -U option, the default if SUPPORT_BC7E was TRUE).\n");
+	fprintf(stderr, "\nReads PNG, BMP, JPG or TGA files (with or without alpha channels) and packs them to BC1-5 or BC7/BPTC (the default).\nFor BC7, the tool uses either bc7enc.cpp (uses modes 1/5/6/7) or bc7e.ispc (all modes, -U option, the default if SUPPORT_BC7E was TRUE).\n");
 	fprintf(stderr, "Supports optional reduced entropy BC7 encoding (using -e, bc7enc.cpp only) and Rate Distortion\nOptimization (RDO - all encoders) for BC1-7 using -z# where # is lambda. Higher lambdas=more compressible files, but lower quality. Can also combine RDO with -e.\n");
 	fprintf(stderr, "By default, this tool compresses to BC7. A DX10 DDS file and a unpacked PNG file will be written\nto the current directory with the .dds/_unpacked.png/_unpacked_alpha.png suffixes.\n");
 	fprintf(stderr, "\nUsage: bc7enc [-apng_filename] [options] input_filename.png [compressed_output.dds] [unpacked_output.png]\n\n");
@@ -77,7 +77,7 @@ static int print_usage()
 	fprintf(stderr, "\"bc7enc -z1.0 -zc32 -ze blah.png\" - RDO BC7 with lambda 1.0, window size 32 bytes (default window is 128), 1 matches per block for faster compression\n");
 	fprintf(stderr, "\"bc7enc -z1.0 -zc256 blah.png\" - RDO BC7 with lambda 1.0, window size 256 bytes (default window is only 128), 2 matches per block for higher compression\n");
 	fprintf(stderr, "\"bc7enc -z1.0 -C -e -zc1024 blah.png\" - RDO BC7 with lambda 1.0, window size 1024 bytes for more gains (but slower), combined with reduced entropy BC7\n");
-	fprintf(stderr, "\"bc7enc -1 -z1.0 blah.png\" - RDO BC1 with lambda 1.0\n");
+	fprintf(stderr, "\"bc7enc -1 -z1.0 blah.tga\" - RDO BC1 with lambda 1.0\n");
 
 #if SUPPORT_BC7E
 	fprintf(stderr, "\nbc7e.ispc (-U option) is supported in this build.\n");
