@@ -2134,9 +2134,9 @@ public:
 				for (size_t x = 0; x < next.width(); x++)
 				{
 					color_quad_u8 value0 = prev(x * 2 + 0, y * 2 + 0);
-					color_quad_u8 value1 = prev(x * 2 + 1, y * 2 + 0);
-					color_quad_u8 value2 = prev(x * 2 + 0, y * 2 + 1);
-					color_quad_u8 value3 = prev(x * 2 + 1, y * 2 + 1);
+					color_quad_u8 value1 = prev.get_clamped(x * 2 + 1, y * 2 + 0);
+					color_quad_u8 value2 = prev.get_clamped(x * 2 + 0, y * 2 + 1);
+					color_quad_u8 value3 = prev.get_clamped(x * 2 + 1, y * 2 + 1);
 
 					// FIXME: Maybe factor out these functions to make this more readable.
 					vec<4, uint32_t> fvalue{};
