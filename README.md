@@ -1,3 +1,16 @@
+Modified version of Rich Geldreich's bc7enc_rdo (https://github.com/richgel999/bc7enc_rdo)
+
+
+Changes compared to his version:
+- MipMap support by Julius Häger (from https://github.com/NogginBops/bc7enc_rdo)
+    - Enable it with the `-mip` commandline flag
+- Support other filetypes than PNG for input (e.g. BMP, TGA, JPG) by using stb_image.h
+    - **NOTE that this means that you should only use this with trustworthy input files!!**
+- Small fixes, mostly for building
+
+Below the original README which still is correct:
+-----
+
 bc7enc - Fast BC1-7 GPU texture encoders with Rate Distortion Optimization (RDO)
 
 This repo contains fast texture encoders for BC1-7. All formats support a simple post-processing transform on the encoded texture data designed to trade off quality for smaller compressed file sizes using LZ compression. Significant (10-50%) size reductions are possible. The BC7 encoder also supports a "reduced entropy" mode using the -e option which causes the output to be biased/weighted in various ways which minimally impact quality, which results in 5-10% smaller file sizes with no slowdowns in encoding time.
