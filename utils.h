@@ -2206,6 +2206,7 @@ private:
 	std::vector<image_u8> m_levels;
 };
 
+// Note: Now also loads TGA, BMP, JPEG etc (using stb_image)
 bool load_png(const char* pFilename, image_u8& img);
 
 bool save_png(const char* pFilename, const image_u8& img, bool save_alpha);

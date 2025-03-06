@@ -6,6 +6,7 @@
 // DG: also support stb_image for input
 #define STBI_NO_PNG // handled by lodepng
 #define STBI_NO_HDR // I don't think we need this?
+#define STBI_NO_LINEAR // neither this (no float textures)
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -170,6 +171,7 @@ void image_u8::rasterize_line(int xs, int ys, int xe, int ye, int pred, int inc_
 	}
 }
 
+// Note: Now also loads TGA, BMP, JPEG etc (using stb_image)
 bool load_png(const char* pFilename, image_u8& img)
 {
 	img.clear();
@@ -197,6 +199,7 @@ bool load_png(const char* pFilename, image_u8& img)
 
 	img.init(x, y);
 	memcpy( &img.get_pixels()[0], pix, (size_t)x * (size_t)y * 4 );
+	STBI_FREE(pix);
 	return true;
 }
 
