@@ -227,7 +227,7 @@ void image_u8_mip::generate_mipmaps(mipmap_generation_method method)
 					fvalue.set_x((uint32_t)value0.r + (uint32_t)value1.r + (uint32_t)value2.r + (uint32_t)value3.r);
 					fvalue.set_y((uint32_t)value0.g + (uint32_t)value1.g + (uint32_t)value2.g + (uint32_t)value3.g);
 					fvalue.set_z((uint32_t)value0.b + (uint32_t)value1.b + (uint32_t)value2.b + (uint32_t)value3.b);
-					fvalue *= 0.25f;
+					fvalue = fvalue / 4;
 					break;
 				case mipmap_generation_method_sRGBBox:
 					value0 = sRGB_to_linear(value0);
@@ -237,7 +237,7 @@ void image_u8_mip::generate_mipmaps(mipmap_generation_method method)
 					fvalue.set_x((uint32_t)value0.r + (uint32_t)value1.r + (uint32_t)value2.r + (uint32_t)value3.r);
 					fvalue.set_y((uint32_t)value0.g + (uint32_t)value1.g + (uint32_t)value2.g + (uint32_t)value3.g);
 					fvalue.set_z((uint32_t)value0.b + (uint32_t)value1.b + (uint32_t)value2.b + (uint32_t)value3.b);
-					fvalue *= 0.25f;
+					fvalue = fvalue / 4;
 					break;
 				case mipmap_generation_method_NormalMap:
 					// FIXME: Figure out if this is something we want...
