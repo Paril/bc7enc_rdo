@@ -191,6 +191,94 @@ void image_u8_mip::swap_red_alpha()
 	}
 }
 
+// FIXME: Care about the clip rect?
+void image_u8_mip::generate_mipmaps(mipmap_generation_method method)
+{
+	int levels = 1 + ilogb(std::max(m_levels[0].width(), m_levels[0].height()));
+	m_levels.resize(levels);
+
+	for (int i = 1; i < m_levels.size(); i++)
+	{
+		int prev_level = i - 1;
+		// FIXME: Don't make a copy of the entire image...?
+		image_u8& prev = m_levels[prev_level];
+
+		image_u8 next(std::max(1u, prev.width() / 2), std::max(1u, prev.height() / 2));
+
+		for (size_t y = 0; y < next.height(); y++)
+		{
+			for (size_t x = 0; x < next.width(); x++)
+			{
+				color_quad_u8 value0 = prev(x * 2 + 0, y * 2 + 0);
+				color_quad_u8 value1 = prev.get_clamped(x * 2 + 1, y * 2 + 0);
+				color_quad_u8 value2 = prev.get_clamped(x * 2 + 0, y * 2 + 1);
+				color_quad_u8 value3 = prev.get_clamped(x * 2 + 1, y * 2 + 1);
+
+				// FIXME: Maybe factor out these functions to make this more readable.
+				vec<4, uint32_t> fvalue{};
+				switch (method)
+				{
+				case mipmap_generation_method_LinearBox:
+				// FIXME: Make this it's own thing
+					fvalue.set_x((uint32_t)value0.r + (uint32_t)value1.r + (uint32_t)value2.r + (uint32_t)value3.r);
+					fvalue.set_y((uint32_t)value0.g + (uint32_t)value1.g + (uint32_t)value2.g + (uint32_t)value3.g);
+					fvalue.set_z((uint32_t)value0.b + (uint32_t)value1.b + (uint32_t)value2.b + (uint32_t)value3.b);
+					fvalue = fvalue / 4.0f;
+					break;
+				case mipmap_generation_method_sRGBBox:
+					value0 = sRGB_to_linear(value0);
+					value1 = sRGB_to_linear(value1);
+					value2 = sRGB_to_linear(value2);
+					value3 = sRGB_to_linear(value3);
+					fvalue.set_x((uint32_t)value0.r + (uint32_t)value1.r + (uint32_t)value2.r + (uint32_t)value3.r);
+					fvalue.set_y((uint32_t)value0.g + (uint32_t)value1.g + (uint32_t)value2.g + (uint32_t)value3.g);
+					fvalue.set_z((uint32_t)value0.b + (uint32_t)value1.b + (uint32_t)value2.b + (uint32_t)value3.b);
+					fvalue = fvalue / 4.0f;
+					break;
+				case mipmap_generation_method_NormalMap:
+					// FIXME: Figure out if this is something we want...
+
+					vec<3, float> normal0(value0.r / 255.0f, value0.g / 255.0f, value0.b / 255.0f);
+					vec<3, float> normal1(value1.r / 255.0f, value1.g / 255.0f, value1.b / 255.0f);
+					vec<3, float> normal2(value2.r / 255.0f, value2.g / 255.0f, value2.b / 255.0f);
+					vec<3, float> normal3(value3.r / 255.0f, value3.g / 255.0f, value3.b / 255.0f);
+
+					// Only unpack if there is normal data in the sample
+					if (normal0 != vec3F(0)) normal0 = (normal0 * 2.0f) - vec3F(1.0f);
+					if (normal1 != vec3F(0)) normal1 = (normal1 * 2.0f) - vec3F(1.0f);
+					if (normal2 != vec3F(0)) normal2 = (normal2 * 2.0f) - vec3F(1.0f);
+					if (normal3 != vec3F(0)) normal3 = (normal3 * 2.0f) - vec3F(1.0f);
+
+					// FIXME: Divide with how many samples where != 0.
+					vec<3, float> normal = (normal0 + normal1 + normal2 + normal3) / 4.0f;
+					if (normal != vec3F(0))
+					{
+						normal.normalize3_in_place();
+						normal = (normal * 0.5f) + vec3F(0.5f);
+					}
+
+					fvalue.set_x((uint32_t)(normal.get_x() * 255));
+					fvalue.set_y((uint32_t)(normal.get_y() * 255));
+					fvalue.set_z((uint32_t)(normal.get_z() * 255));
+					break;
+				}
+
+				// FIXME: Setting for choosing something like perserve coverage...
+				fvalue.set_w(((uint32_t)value0.a + (uint32_t)value1.a + (uint32_t)value2.a + (uint32_t)value3.a) / 4);
+
+				color_quad_u8 value((uint8_t)fvalue.get_x(), (uint8_t)fvalue.get_y(), (uint8_t)fvalue.get_z(), (uint8_t)fvalue.get_w());
+
+				if (method == mipmap_generation_method_sRGBBox)
+					value = linear_to_sRGB(value);
+
+				next(x, y) = value;
+			}
+		}
+
+		m_levels[i] = next;
+	}
+}
+
 // Note: Now also loads TGA, BMP, JPEG etc (using stb_image)
 bool load_png(const char* pFilename, image_u8& img)
 {
