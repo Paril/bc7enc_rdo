@@ -253,8 +253,8 @@ void image_u8_mip::generate_mipmaps(mipmap_generation_method method)
 					if (normal2 != vec3F(0)) normal2 = (normal2 * 2.0f) - vec3F(1.0f);
 					if (normal3 != vec3F(0)) normal3 = (normal3 * 2.0f) - vec3F(1.0f);
 
-					// FIXME: Divide with how many samples where != 0.
-					vec3F normal = (normal0 + normal1 + normal2 + normal3) / 4.0f;
+					// Note: no reason to divide normal by 4 or similar, because it gets normalized anyway
+					vec3F normal = normal0 + normal1 + normal2 + normal3;
 					if (normal != vec3F(0))
 					{
 						normal.normalize3_in_place();
