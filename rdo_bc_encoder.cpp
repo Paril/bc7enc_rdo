@@ -390,6 +390,7 @@ namespace rdo_bc
 			printf("  DXGI format: 0x%X %s\n", m_params.m_dxgi_format, get_dxgi_format_string(m_params.m_dxgi_format));
 			printf("  Generate Mipmaps: %u\n", m_params.m_generate_mipmaps);
 			printf("    Generation method: %s\n", get_mipmap_generation_method_name(m_params.m_mipmap_method));
+			printf("  Swap Red and Alpha channels: %u\n", m_params.m_swap_red_alpha);
 
 			printf("BC1-5 parameters:\n");
 			printf("  BC45 channels: %u %u\n", m_params.m_bc45_channel0, m_params.m_bc45_channel1);
@@ -492,6 +493,8 @@ namespace rdo_bc
 			m_total_blocks_x = m_blocks_x;
 			m_total_blocks_y = m_blocks_x;
 		}
+		if (m_params.m_swap_red_alpha)
+			m_source_image_mips.swap_red_alpha();
 
 		m_total_blocks_all_mips = m_total_blocks_x * m_total_blocks_y;
 		// FIXME: Is this per mip or for all mips?

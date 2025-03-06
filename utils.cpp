@@ -171,6 +171,26 @@ void image_u8::rasterize_line(int xs, int ys, int xe, int ye, int pred, int inc_
 	}
 }
 
+void image_u8_mip::swap_red_alpha()
+{
+	for (size_t i = 0; i < m_levels.size(); i++)
+	{
+		image_u8& img = m_levels[i];
+		const size_t w = img.width();
+		const size_t h = img.height();
+		for (size_t y = 0; y < h; y++)
+		{
+			for (size_t x = 0; x < w; x++)
+			{
+				color_quad_u8& pixel = img(x, y);
+				uint8_t tmp = pixel.a;
+				pixel.a = pixel.r;
+				pixel.r = tmp;
+			}
+		}
+	}
+}
+
 // Note: Now also loads TGA, BMP, JPEG etc (using stb_image)
 bool load_png(const char* pFilename, image_u8& img)
 {
