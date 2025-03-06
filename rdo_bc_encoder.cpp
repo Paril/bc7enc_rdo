@@ -613,7 +613,7 @@ namespace rdo_bc
 #endif
 		{
 			int32_t image_start_block_offset = 0;
-			for (uint32_t ix = 0; ix < static_cast<int32_t>(m_source_image_mips.get_number_of_levels()); ix++)
+			for (uint32_t ix = 0; ix < static_cast<uint32_t>(m_source_image_mips.get_number_of_levels()); ix++)
 			{
 				printf("Encoding mip: %i\n", ix);
 				// FIXME: Avoid copy?
