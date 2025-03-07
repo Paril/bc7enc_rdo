@@ -748,7 +748,7 @@ bool save_dds(const char* pFilename, uint32_t width, uint32_t height, uint32_t m
 	memset(&desc, 0, sizeof(desc));
 
 	desc.dwSize = sizeof(desc);
-	desc.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_CAPS | DDSD_MIPMAPCOUNT;
+	desc.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_CAPS;
 
 	desc.dwWidth = width;
 	desc.dwHeight = height;
@@ -756,6 +756,12 @@ bool save_dds(const char* pFilename, uint32_t width, uint32_t height, uint32_t m
 	desc.dwMipMapCount = mip_levels;
 
 	desc.ddsCaps.dwCaps = DDSCAPS_TEXTURE;
+	if (mip_levels > 1)
+	{
+		desc.dwFlags |= DDSD_MIPMAPCOUNT;
+		desc.ddsCaps.dwCaps |= (DDSCAPS_MIPMAP | DDSCAPS_COMPLEX);
+	}
+
 	desc.ddpfPixelFormat.dwSize = sizeof(desc.ddpfPixelFormat);
 
 	desc.ddpfPixelFormat.dwFlags |= DDPF_FOURCC;
