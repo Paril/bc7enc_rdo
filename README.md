@@ -4,10 +4,10 @@ Modified version of Rich Geldreich's bc7enc_rdo (https://github.com/richgel999/b
 Changes compared to his version:
 - MipMap support by Julius Häger (from https://github.com/NogginBops/bc7enc_rdo)
     - Enable it with the `-mip` commandline flag
-- Support Swapping the Red and Alpha channel, as used by Doom3 normalmaps
-  *(Doom3 calls it "RXGB", even though the actual channel layout is "XGBR" or "AGBR").*
-    - Enable it with the `-sra` commandline flag, like:  
-      `bc7enc -sra -mip -mN /path/to/textures/foo/bar_local.tga /path/to/dds/textures/foo/bar_local.dds`  
+- Support moving the Red color channel to the Alpha channel, as used by Doom3 normalmaps
+  *(Doom3 calls it "RXGB", even though the actual channel layout is "XGBR").*
+    - Enable it with the `-r2a` commandline flag, like:  
+      `bc7enc -r2a -mip -mN /path/to/textures/foo/bar_local.tga /path/to/dds/textures/foo/bar_local.dds`  
       *(Note: `-mN` optimizes mipmap generation for normalmaps)*
 - Support other filetypes than PNG for input (e.g. BMP, TGA, JPG) by using stb_image.h
     - **NOTE that this means that you should only use this with trustworthy input files!!**

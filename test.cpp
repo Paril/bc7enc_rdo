@@ -29,7 +29,7 @@ static int print_usage()
 	fprintf(stderr, "-mL Filter mipmaps for linear data (default).\n");
 	fprintf(stderr, "-mP Filter mipmaps for sRGB data (use when generating mipmaps and -s is specified).\n");
 	fprintf(stderr, "-mN Filter mipmaps for normal map data.\n");
-	fprintf(stderr, "-sra Swap red and alpha channel (used for Doom3 normal maps)\n");
+	fprintf(stderr, "-r2a Move red channel to alpha channel (used for Doom3 normal maps)\n");
 	fprintf(stderr, "-o Write output files to the source file's directory, instead of the current directory.\n");
 	fprintf(stderr, "-1 Encode to BC1. Use -L# option to set the base BC1 encoder's quality (default is 18 - highest quality).\n");
 	fprintf(stderr, "-3 Encode to BC3. Use -L# option to set the base BC1 encoder's quality (default is 18 - highest quality).\n");
@@ -483,9 +483,9 @@ int main(int argc, char* argv[])
 					{
 						rp.m_perceptual = true;
 					}
-					else if(strncmp(pArg, "-sra", 4) == 0)
+					else if(strncmp(pArg, "-sra", 4) == 0) // renamed to -r2a, but support for backwards-compat
 					{
-						rp.m_swap_red_alpha = true;
+						rp.m_red_to_alpha = true;
 					}
 					break;
 				}
@@ -530,7 +530,14 @@ int main(int argc, char* argv[])
 				}
 				case 'r':
 				{
-					rp.m_bc1_mode = rgbcx::bc1_approx_mode::cBC1IdealRound4;
+					if(pArg[2] == '\0') // just '-r'
+					{
+						rp.m_bc1_mode = rgbcx::bc1_approx_mode::cBC1IdealRound4;
+					}
+					else if (strncmp(pArg, "-r2a", 4) == 0)
+					{
+						rp.m_red_to_alpha = true;
+					}
 					break;
 				}
 				case 'z':

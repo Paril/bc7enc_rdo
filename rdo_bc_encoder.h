@@ -35,7 +35,7 @@ namespace rdo_bc
 			m_bc7enc_max_partitions_to_scan = BC7ENC_MAX_PARTITIONS;
 			m_perceptual = false;
 			m_y_flip = false;
-			m_swap_red_alpha = false;
+			m_red_to_alpha = false;
 			m_bc45_channel0 = 0;
 			m_bc45_channel1 = 1;
 
@@ -93,7 +93,7 @@ namespace rdo_bc
 		int m_bc7enc_max_partitions_to_scan;
 		bool m_perceptual;
 		bool m_y_flip;
-		bool m_swap_red_alpha; // red and alpha chan swapped, used for normalmaps, for example by Doom3
+		bool m_red_to_alpha; // red channel moved to alpha channel, used for normalmaps, for example by Doom3
 		uint32_t m_bc45_channel0;
 		uint32_t m_bc45_channel1;
 

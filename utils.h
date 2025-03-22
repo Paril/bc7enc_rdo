@@ -2115,7 +2115,7 @@ public:
 		return &m_levels[level];
 	}
 
-	void swap_red_alpha();
+	void red_to_alpha();
 
 	// FIXME: Care about the clip rect?
 	void generate_mipmaps(mipmap_generation_method method);

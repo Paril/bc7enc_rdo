@@ -390,7 +390,7 @@ namespace rdo_bc
 			printf("  DXGI format: 0x%X %s\n", m_params.m_dxgi_format, get_dxgi_format_string(m_params.m_dxgi_format));
 			printf("  Generate Mipmaps: %u\n", m_params.m_generate_mipmaps);
 			printf("    Generation method: %s\n", get_mipmap_generation_method_name(m_params.m_mipmap_method));
-			printf("  Swap Red and Alpha channels: %u\n", m_params.m_swap_red_alpha);
+			printf("  Move Red to Alpha channel: %u\n", m_params.m_red_to_alpha);
 
 			printf("BC1-5 parameters:\n");
 			printf("  BC45 channels: %u %u\n", m_params.m_bc45_channel0, m_params.m_bc45_channel1);
@@ -482,7 +482,8 @@ namespace rdo_bc
 			clock_t start = clock();
 			m_source_image_mips.generate_mipmaps(m_params.m_mipmap_method);
 			clock_t end = clock();
-			printf("Generating mipmaps took: %f s\n", (double)(end - start) / CLOCKS_PER_SEC);
+			if(m_params.m_status_output)
+				printf("Generating mipmaps took: %f s\n", (double)(end - start) / CLOCKS_PER_SEC);
 
 			// All mip levels fit in 2*x * 2*y blocks
 			m_total_blocks_x = m_blocks_x + m_blocks_x;
@@ -493,13 +494,14 @@ namespace rdo_bc
 			m_total_blocks_x = m_blocks_x;
 			m_total_blocks_y = m_blocks_x;
 		}
-		if (m_params.m_swap_red_alpha)
-			m_source_image_mips.swap_red_alpha();
+		if (m_params.m_red_to_alpha)
+			m_source_image_mips.red_to_alpha();
 
 		m_total_blocks_all_mips = m_total_blocks_x * m_total_blocks_y;
 		// FIXME: Is this per mip or for all mips?
 		m_total_texels = m_total_blocks * 16;
 
+#if 0 // FIXME: has_alpha isn't used?
 		bool has_alpha = false;
 		for (int by = 0; by < ((int)m_blocks_y) && !has_alpha; by++)
 		{
@@ -518,7 +520,8 @@ namespace rdo_bc
 				}
 			}
 		}
-				
+#endif
+
 		if (m_pixel_format_bpp == 8)
 			m_packed_image16.resize(m_total_blocks_all_mips);
 		else
@@ -542,9 +545,11 @@ namespace rdo_bc
 
 			// FIXME: Maybe some other way to figure out what block we are in..
 			int32_t image_start_block_offset = 0;
-			for (uint32_t ix = 0; ix < static_cast<int32_t>(m_source_image_mips.get_number_of_levels()); ix++)
+			for (uint32_t ix = 0; ix < static_cast<uint32_t>(m_source_image_mips.get_number_of_levels()); ix++)
 			{
-				printf("Encoding mip: %i\n", ix);
+				if(m_params.m_status_output)
+					printf("Encoding mip: %i\n", ix);
+
 				// FIXME: Avoid copy?
 				image_u8& mip_image = *m_source_image_mips.get_level(ix);
 

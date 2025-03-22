@@ -171,7 +171,7 @@ void image_u8::rasterize_line(int xs, int ys, int xe, int ye, int pred, int inc_
 	}
 }
 
-void image_u8_mip::swap_red_alpha()
+void image_u8_mip::red_to_alpha()
 {
 	for (size_t i = 0; i < m_levels.size(); i++)
 	{
@@ -183,9 +183,8 @@ void image_u8_mip::swap_red_alpha()
 			for (size_t x = 0; x < w; x++)
 			{
 				color_quad_u8& pixel = img(x, y);
-				uint8_t tmp = pixel.a;
 				pixel.a = pixel.r;
-				pixel.r = tmp;
+				pixel.r = 0;
 			}
 		}
 	}
