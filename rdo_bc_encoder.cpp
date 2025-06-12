@@ -492,7 +492,7 @@ namespace rdo_bc
 		else
 		{
 			m_total_blocks_x = m_blocks_x;
-			m_total_blocks_y = m_blocks_x;
+			m_total_blocks_y = m_blocks_y;
 		}
 		if (m_params.m_red_to_alpha)
 			m_source_image_mips.red_to_alpha();
