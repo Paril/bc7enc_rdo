@@ -201,15 +201,17 @@ void image_u8_mip::generate_mipmaps(mipmap_generation_method method)
 		int prev_level = i - 1;
 		// FIXME: Don't make a copy of the entire image...?
 		image_u8& prev = m_levels[prev_level];
-
-		image_u8 next(std::max(1u, prev.width() / 2), std::max(1u, prev.height() / 2));
-		const size_t w = next.width();
-		const size_t h = next.height();
+		//(m_source_image.width() + 3) & ~3
+		const size_t mw = std::max(1u, ((m_levels[0].width() >> i) + 3) & ~3);
+		const size_t mh = std::max(1u, ((m_levels[0].height() >> i) + 3) & ~3);
+		image_u8 next(mw, mh);
+		const size_t w = m_levels[0].width() >> i;
+		const size_t h = m_levels[0].height() >> i;
 		for (size_t y = 0; y < h; y++)
 		{
 			for (size_t x = 0; x < w; x++)
 			{
-				color_quad_u8 value0 = prev(x * 2 + 0, y * 2 + 0);
+				color_quad_u8 value0 = prev.get_clamped(x * 2 + 0, y * 2 + 0);
 				color_quad_u8 value1 = prev.get_clamped(x * 2 + 1, y * 2 + 0);
 				color_quad_u8 value2 = prev.get_clamped(x * 2 + 0, y * 2 + 1);
 				color_quad_u8 value3 = prev.get_clamped(x * 2 + 1, y * 2 + 1);

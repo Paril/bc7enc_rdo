@@ -487,7 +487,7 @@ namespace rdo_bc
 
 			// All mip levels fit in 2*x * 2*y blocks
 			m_total_blocks_x = m_blocks_x + m_blocks_x;
-			m_total_blocks_y = m_blocks_x + m_blocks_y;
+			m_total_blocks_y = m_blocks_y + m_blocks_y;
 		}
 		else
 		{
